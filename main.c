@@ -15,6 +15,13 @@ struct Node {
 #define NODES_COUNT 26
 #define NODES_FILE_NAME "nodes"
 
+static void onFriendRequest(
+  Tox *tox,
+  const uint8_t *key,
+  const uint8_t *data,
+  size_t length,
+  void *user_data);
+
 int main()
 {
   struct Tox_Options tox_options;
@@ -81,6 +88,8 @@ int main()
       );
   }
 
+  tox_callback_friend_request(tox, onFriendRequest, NULL);
+
   while (true) {
     tox_iterate(tox);
   }
@@ -88,4 +97,14 @@ int main()
   tox_kill(tox);
 
   exit(EXIT_SUCCESS);
+}
+
+void onFriendRequest(
+  Tox *const tox,
+  const uint8_t *const key,
+  const uint8_t *const data,
+  size_t length,
+  void *const user_data)
+{
+  tox_friend_add_norequest(tox, key, NULL);
 }
