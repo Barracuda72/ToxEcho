@@ -1,7 +1,19 @@
 #include <tox/tox.h>
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#define IP_LENGTH_MAX 15
+
+struct Node {
+  char ip[IP_LENGTH_MAX + 1];
+  int port;
+  char key[(TOX_PUBLIC_KEY_SIZE * 2) + 1];
+};
+
+#define NODES_COUNT 26
+#define NODES_FILE_NAME "nodes"
 
 int main()
 {
@@ -28,6 +40,25 @@ int main()
   }
 
   printf("\n");
+
+  struct Node nodes[NODES_COUNT];
+
+  FILE *nodes_file = fopen(NODES_FILE_NAME, "r");
+
+  if (!nodes_file)
+    exit(EXIT_FAILURE);
+
+  for (int node_index = 0; node_index < NODES_COUNT; ++node_index) {
+    struct Node *const node = &nodes[node_index];
+
+    fscanf(nodes_file, "%s %d %s",
+      node->ip,
+      &node->port,
+      node->key
+    );
+  }
+
+  fclose(nodes_file);
 
   return 0;
 }
