@@ -8,6 +8,12 @@ messages to user.
 List of DHT nodes to bootstrap (file `nodes`) comes from
 [Toxic source](https://github.com/Tox/toxic/blob/master/misc/DHTnodes).
 
+**WARNING**
+
+This program doesn't save state, so you have to send friendship request
+again after each run. For example of permanent state look at
+[ToxBot source](https://github.com/JFreegman/ToxBot/blob/master/src/toxbot.c#L277).
+
 Further studying
 ----------------
 
