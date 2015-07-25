@@ -37,9 +37,13 @@ static void onFriendMessage(
 
 int main()
 {
+  // Allocate Tox options and initialize with defaults
+
   struct Tox_Options tox_options;
   memset(&tox_options, 0, sizeof(struct Tox_Options));
   tox_options_default(&tox_options);
+
+  // Initialize Tox instance
 
   TOX_ERR_NEW err;
 
@@ -47,6 +51,8 @@ int main()
 
   if (err != TOX_ERR_NEW_OK)
     exit(EXIT_FAILURE);
+
+  // Print ID to STDOUT
 
   char address[TOX_ADDRESS_SIZE];
   tox_self_get_address(tox, (uint8_t*)address);
@@ -60,6 +66,8 @@ int main()
   }
 
   printf("\n");
+
+  // Load list of nodes from file
 
   struct Node nodes[NODES_COUNT];
 
@@ -80,6 +88,8 @@ int main()
 
   fclose(nodes_file);
 
+  // Bootstrap Tox with loaded nodes
+
   for (int node_index = 0; node_index < NODES_COUNT; ++node_index) {
     struct Node *const node = &nodes[node_index];
 
@@ -99,12 +109,18 @@ int main()
       );
   }
 
+  // Setup callbacks for Tox instance
+
   tox_callback_friend_request(tox, onFriendRequest, NULL);
   tox_callback_friend_message(tox, onFriendMessage, NULL);
+
+  // Event loop
 
   while (true) {
     tox_iterate(tox);
   }
+
+  // Exit gracefully
 
   tox_kill(tox);
 
