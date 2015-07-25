@@ -84,5 +84,7 @@ int main()
   while (true) {
   }
 
-  return 0;
+  tox_kill(tox);
+
+  exit(EXIT_SUCCESS);
 }
