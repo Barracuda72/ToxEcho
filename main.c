@@ -82,6 +82,7 @@ int main()
   }
 
   while (true) {
+    tox_iterate(tox);
   }
 
   tox_kill(tox);
