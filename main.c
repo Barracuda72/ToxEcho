@@ -118,10 +118,12 @@ int main()
   // Event loop
 
   struct timespec delay;
+
   while (true) {
     delay.tv_sec = 0;
     delay.tv_nsec = tox_iteration_interval(tox) * 1000000;
-    nanosleep(&delay,NULL);
+    nanosleep(&delay, NULL);
+
     tox_iterate(tox);
   }
 
