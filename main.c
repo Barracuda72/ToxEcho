@@ -22,6 +22,14 @@ static void onFriendRequest(
   size_t length,
   void *user_data);
 
+static void onFriendMessage(
+  Tox *tox,
+  uint32_t friend_number,
+  TOX_MESSAGE_TYPE type,
+  const uint8_t *string,
+  size_t length,
+  void *user_data);
+
 int main()
 {
   struct Tox_Options tox_options;
@@ -89,6 +97,7 @@ int main()
   }
 
   tox_callback_friend_request(tox, onFriendRequest, NULL);
+  tox_callback_friend_message(tox, onFriendMessage, NULL);
 
   while (true) {
     tox_iterate(tox);
@@ -107,4 +116,18 @@ void onFriendRequest(
   void *const user_data)
 {
   tox_friend_add_norequest(tox, key, NULL);
+}
+
+void onFriendMessage(
+  Tox *const tox,
+  const uint32_t friend_number,
+  const TOX_MESSAGE_TYPE type,
+  const uint8_t *const string,
+  const size_t length,
+  void *const user_data)
+{
+  if (type != TOX_MESSAGE_TYPE_NORMAL)
+    return;
+
+  tox_friend_send_message(tox, friend_number, TOX_MESSAGE_TYPE_NORMAL, string, length, NULL);
 }
