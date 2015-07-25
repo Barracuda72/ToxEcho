@@ -18,6 +18,8 @@ struct Node {
 #define NODES_COUNT 26
 #define NODES_FILE_NAME "nodes"
 
+static void Key_to_KeyBin(const char *key, uint8_t *key_bin);
+
 static void onFriendRequest(
   Tox *tox,
   const uint8_t *key,
@@ -82,9 +84,7 @@ int main()
     struct Node *const node = &nodes[node_index];
 
     uint8_t key_bin[TOX_PUBLIC_KEY_SIZE];
-
-    for (int i = 0; i < TOX_PUBLIC_KEY_SIZE; ++i)
-      sscanf(&node->key[i * 2], "%2hhx", &key_bin[i]);
+    Key_to_KeyBin(node->key, key_bin);
 
     TOX_ERR_BOOTSTRAP err;
 
@@ -109,6 +109,12 @@ int main()
   tox_kill(tox);
 
   exit(EXIT_SUCCESS);
+}
+
+void Key_to_KeyBin(const char *const key, uint8_t *const key_bin)
+{
+  for (int i = 0; i < TOX_PUBLIC_KEY_SIZE; ++i)
+    sscanf(&key[i * 2], "%2hhx", &key_bin[i]);
 }
 
 void onFriendRequest(
