@@ -60,5 +60,26 @@ int main()
 
   fclose(nodes_file);
 
+  for (int node_index = 0; node_index < NODES_COUNT; ++node_index) {
+    struct Node *const node = &nodes[node_index];
+
+    uint8_t key_bin[TOX_PUBLIC_KEY_SIZE];
+
+    for (int i = 0; i < TOX_PUBLIC_KEY_SIZE; ++i)
+      sscanf(&node->key[i * 2], "%2hhx", &key_bin[i]);
+
+    TOX_ERR_BOOTSTRAP err;
+
+    tox_bootstrap(tox, node->ip, node->port, key_bin, &err);
+
+    if (err != TOX_ERR_BOOTSTRAP_OK)
+      fprintf(stderr, "Failed to bootstrap (\"%s\", %d, \"%s\") with error code %d\n",
+        node->ip,
+        node->port,
+        node->key,
+        err
+      );
+  }
+
   return 0;
 }
