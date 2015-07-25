@@ -6,10 +6,13 @@
 
 #define IP_LENGTH_MAX 15
 
+typedef char IP[IP_LENGTH_MAX + 1];
+typedef char Key[(TOX_PUBLIC_KEY_SIZE * 2) + 1];
+
 struct Node {
-  char ip[IP_LENGTH_MAX + 1];
+  IP ip;
   int port;
-  char key[(TOX_PUBLIC_KEY_SIZE * 2) + 1];
+  Key key;
 };
 
 #define NODES_COUNT 26
