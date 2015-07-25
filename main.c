@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #define IP_LENGTH_MAX 15
 
@@ -116,7 +117,11 @@ int main()
 
   // Event loop
 
-  while (tox_iteration_interval(tox)) {
+  struct timespec delay;
+  while (true) {
+    delay.tv_sec = 0;
+    delay.tv_nsec = tox_iteration_interval(tox) * 1000000;
+    nanosleep(&delay,NULL);
     tox_iterate(tox);
   }
 
