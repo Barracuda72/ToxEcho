@@ -116,7 +116,7 @@ int main()
 
   // Event loop
 
-  while (true) {
+  while (tox_iteration_interval(tox)) {
     tox_iterate(tox);
   }
 
