@@ -41,7 +41,6 @@ int main()
   // Allocate Tox options and initialize with defaults
 
   struct Tox_Options tox_options;
-  memset(&tox_options, 0, sizeof(struct Tox_Options));
   tox_options_default(&tox_options);
 
   // Initialize Tox instance
