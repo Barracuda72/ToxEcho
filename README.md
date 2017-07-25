@@ -13,7 +13,7 @@ comes from Toxic source (not available anymore, refer to
 
 This program doesn't save state, so you have to send friendship request
 again after each run. For example of permanent state look at
-[ToxBot source](https://github.com/JFreegman/ToxBot/blob/master/src/toxbot.c#L277).
+[ToxBot source](https://github.com/JFreegman/ToxBot/blob/d0ae67f364979cb9bf57f799d2cdd3aff234146b/src/toxbot.c#L280).
 
 Further studying
 ----------------
