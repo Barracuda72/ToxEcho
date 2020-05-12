@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <sodium/utils.h>
 #include <tox/tox.h>
@@ -150,10 +151,10 @@ Tox* create_tox(const char* savedata_filename)
 
 char* tmpname(const char* prefix)
 {
-  int n = strlen(prefix);
-  char* res = malloc(n+7+1);
-  strncpy(res, prefix, n+1);
-  strncat(res, "-XXXXXX", n+7+1);
+  const char* suffix = "-XXXXXX";
+  char* res = malloc(strlen(prefix)+strlen(suffix)+1);
+  strcpy(res, prefix);
+  strcat(res, suffix);
 
   return res;
 }
@@ -166,9 +167,9 @@ void update_savedata_file(const Tox *tox, const char* savedata_filename)
 
     char* savedata_tmp_filename = tmpname(savedata_filename);
 
-    FILE *f = fopen(savedata_tmp_filename, "wb");
-    fwrite(savedata, size, 1, f);
-    fclose(f);
+    int fd = mkstemp(savedata_tmp_filename);
+    write(fd, savedata, size);
+    close(fd);
 
     rename(savedata_tmp_filename, savedata_filename);
 
