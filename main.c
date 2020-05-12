@@ -129,8 +129,8 @@ int main()
 
   // Setup callbacks for Tox instance
 
-  tox_callback_friend_request(tox, onFriendRequest, NULL);
-  tox_callback_friend_message(tox, onFriendMessage, NULL);
+  tox_callback_friend_request(tox, onFriendRequest);
+  tox_callback_friend_message(tox, onFriendMessage);
 
   // Event loop
 
@@ -141,7 +141,7 @@ int main()
     delay.tv_nsec = tox_iteration_interval(tox) * 1000000;
     nanosleep(&delay, NULL);
 
-    tox_iterate(tox);
+    tox_iterate(tox, NULL);
   }
 
   // Exit gracefully
