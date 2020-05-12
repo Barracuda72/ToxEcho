@@ -205,7 +205,7 @@ void bootstrap_tox(Tox* tox)
 
 int main()
 {
-  Tox* tox = create_tox(NULL);
+  Tox* tox = create_tox(SAVEDATA_FILE);
 
   printf("ID: ");
 
@@ -220,6 +220,7 @@ int main()
   tox_callback_self_connection_status(tox, onConnectionStatus);
 
   update_savedata_file(tox, SAVEDATA_FILE);
+
   // Event loop
 
   struct timespec delay;
