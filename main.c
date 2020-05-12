@@ -207,11 +207,17 @@ int main()
 {
   Tox* tox = create_tox(SAVEDATA_FILE);
 
+  const char *name = "Echo Bot";
+  tox_self_set_name(tox, (uint8_t*)name, strlen(name), NULL);
+
+  const char *status_message = "Echoing your messages";
+  tox_self_set_status_message(tox, (uint8_t*)status_message, strlen(status_message), NULL);
+
+  bootstrap_tox(tox);
+
   printf("ID: ");
 
   print_tox_id(tox);
-
-  bootstrap_tox(tox);
 
   // Setup callbacks for Tox instance
 
