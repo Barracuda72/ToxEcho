@@ -161,15 +161,18 @@ char* tmpname(const char* prefix)
 
 void update_savedata_file(const Tox *tox, const char* savedata_filename)
 {
-    size_t size = tox_get_savedata_size(tox);
+    int size = tox_get_savedata_size(tox);
     uint8_t *savedata = malloc(size);
     tox_get_savedata(tox, savedata);
 
     char* savedata_tmp_filename = tmpname(savedata_filename);
 
     int fd = mkstemp(savedata_tmp_filename);
-    write(fd, savedata, size);
+    int written = write(fd, savedata, size);
     close(fd);
+
+    if (written != size)
+      fprintf(stderr, "Error saving savedata!\n");
 
     rename(savedata_tmp_filename, savedata_filename);
 
