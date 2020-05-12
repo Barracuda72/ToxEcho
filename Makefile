@@ -1,6 +1,6 @@
 OUTPUT = toxecho
 OBJ = main.o
-LIBS = toxcore
+LIBS = toxcore libsodium
 
 CFLAGS = -std=c11 -Wall -Wextra -pedantic -O2
 LDFLAGS = $(shell pkg-config --libs $(LIBS))

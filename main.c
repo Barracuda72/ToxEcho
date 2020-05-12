@@ -18,12 +18,13 @@
 
 #define _POSIX_C_SOURCE 200809L // For nanosleep()
 
-#include <tox/tox.h>
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
+#include <sodium/utils.h>
+#include <tox/tox.h>
 
 #define IP_LENGTH_MAX 15
 
@@ -38,8 +39,6 @@ struct Node {
 
 #define NODES_COUNT 26
 #define NODES_FILE_NAME "nodes"
-
-static void Key_to_KeyBin(const char *key, uint8_t *key_bin);
 
 static void onFriendRequest(
   Tox *tox,
@@ -120,7 +119,8 @@ void bootstrap_tox(Tox* tox)
     struct Node *const node = &nodes[node_index];
 
     uint8_t key_bin[TOX_PUBLIC_KEY_SIZE];
-    Key_to_KeyBin(node->key, key_bin);
+    sodium_hex2bin(key_bin, sizeof(key_bin), node->key, sizeof(node->key)-1,
+                       NULL, NULL, NULL);
 
     TOX_ERR_BOOTSTRAP err;
 
@@ -168,12 +168,6 @@ int main()
   tox_kill(tox);
 
   exit(EXIT_SUCCESS);
-}
-
-void Key_to_KeyBin(const char *const key, uint8_t *const key_bin)
-{
-  for (int i = 0; i < TOX_PUBLIC_KEY_SIZE; ++i)
-    sscanf(&key[i * 2], "%2hhx", &key_bin[i]);
 }
 
 void onFriendRequest(
