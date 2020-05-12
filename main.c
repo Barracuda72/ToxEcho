@@ -26,6 +26,7 @@
 
 #include <sodium/utils.h>
 #include <tox/tox.h>
+#include <tox/toxav.h>
 
 #define SAVEDATA_FILE "savedata.tox"
 
@@ -78,6 +79,16 @@ static void onConferenceMessage(
   TOX_MESSAGE_TYPE type, 
   const uint8_t *message, 
   size_t length, 
+  void *user_data);
+
+void onAudioReceived(
+  Tox *tox, 
+  uint32_t groupnumber, 
+  uint32_t peernumber, 
+  const int16_t *pcm, 
+  unsigned int samples, 
+  uint8_t channels, 
+  uint32_t sample_rate, 
   void *user_data);
 
 Tox* create_tox(const char* savedata_filename)
@@ -326,6 +337,7 @@ void onConferenceInvite(
       break;
 
     case TOX_CONFERENCE_TYPE_AV:
+      toxav_join_av_groupchat(tox, friend_number, cookie, length, onAudioReceived, NULL);
       break;
   }
 
@@ -345,4 +357,17 @@ void onConferenceMessage(
     return;
 
   tox_conference_send_message(tox, conference_number, TOX_MESSAGE_TYPE_NORMAL, message, length, NULL);
+}
+
+void onAudioReceived(
+  Tox *const tox, 
+  const uint32_t groupnumber, 
+  const uint32_t peernumber, 
+  const int16_t *const pcm, 
+  const unsigned int samples, 
+  const uint8_t channels, 
+  const uint32_t sample_rate, 
+  void *const user_data)
+{
+  // Do nothing
 }
