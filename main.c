@@ -91,7 +91,7 @@ Tox* create_tox(const char* savedata_filename)
     long read = fread(savedata, fsize, 1, f);
     fclose(f);
 
-    if (read != fsize)
+    if (read != 1)
     {
       fprintf(stderr, "Failed to read savedata '%s': %s\n", 
         savedata_filename, strerror(errno));
