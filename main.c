@@ -73,16 +73,12 @@ Tox* create_tox()
   return tox;
 }
 
-int main()
+void print_tox_id(Tox* tox)
 {
-  Tox* tox = create_tox();
-
   // Print ID to STDOUT
 
   char address[TOX_ADDRESS_SIZE];
   tox_self_get_address(tox, (uint8_t*)address);
-
-  printf("ID: ");
 
   for (int i = 0; i < TOX_ADDRESS_SIZE; ++i) {
     char d[3];
@@ -91,6 +87,15 @@ int main()
   }
 
   printf("\n");
+}
+
+int main()
+{
+  Tox* tox = create_tox();
+
+  printf("ID: ");
+
+  print_tox_id(tox);
 
   // Load list of nodes from file
 
