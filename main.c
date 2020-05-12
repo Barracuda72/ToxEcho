@@ -89,14 +89,8 @@ void print_tox_id(Tox* tox)
   printf("\n");
 }
 
-int main()
+void bootstrap_tox(Tox* tox)
 {
-  Tox* tox = create_tox();
-
-  printf("ID: ");
-
-  print_tox_id(tox);
-
   // Load list of nodes from file
 
   struct Node nodes[NODES_COUNT];
@@ -138,6 +132,17 @@ int main()
         err
       );
   }
+}
+
+int main()
+{
+  Tox* tox = create_tox();
+
+  printf("ID: ");
+
+  print_tox_id(tox);
+
+  bootstrap_tox(tox);
 
   // Setup callbacks for Tox instance
 
