@@ -18,6 +18,7 @@
 
 #define _POSIX_C_SOURCE 200809L // For nanosleep()
 
+#include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -25,6 +26,8 @@
 
 #include <sodium/utils.h>
 #include <tox/tox.h>
+
+#define SAVEDATA_FILE "savedata.tox"
 
 #define IP_LENGTH_MAX 15
 
@@ -55,23 +58,82 @@ static void onFriendMessage(
   size_t length,
   void *user_data);
 
-Tox* create_tox()
+Tox* create_tox(const char* savedata_filename)
 {
   // Allocate Tox options and initialize with defaults
 
-  struct Tox_Options tox_options;
-  tox_options_default(&tox_options);
+  struct Tox_Options options;
+  tox_options_default(&options);
 
   // Initialize Tox instance
 
   TOX_ERR_NEW err;
+  Tox* tox = NULL;
 
-  Tox *tox = tox_new(&tox_options, &err);
+  FILE* f = NULL;
+  uint8_t* savedata = NULL;
+
+  if (savedata_filename)
+    f = fopen(savedata_filename, "rb");
+  
+  if (f) 
+  {
+    fseek(f, 0, SEEK_END);
+    long fsize = ftell(f);
+    fseek(f, 0, SEEK_SET);
+ 
+    uint8_t *savedata = malloc(fsize);
+    long read = fread(savedata, fsize, 1, f);
+    fclose(f);
+
+    if (read != fsize)
+    {
+      fprintf(stderr, "Failed to read savedata '%s': %s\n", 
+        savedata_filename, strerror(errno));
+    } else {
+      options.savedata_type = TOX_SAVEDATA_TYPE_TOX_SAVE;
+      options.savedata_data = savedata;
+      options.savedata_length = fsize;
+    }
+  }
+
+  tox = tox_new(&options, &err);
+ 
+  if (savedata)
+    free(savedata);
 
   if (err != TOX_ERR_NEW_OK)
     exit(EXIT_FAILURE);
 
   return tox;
+}
+
+char* tmpname(const char* prefix)
+{
+  int n = strlen(prefix);
+  char* res = malloc(n+7+1);
+  strncpy(res, prefix, n+1);
+  strncat(res, "-XXXXXX", n+7+1);
+
+  return res;
+}
+
+void update_savedata_file(const Tox *tox, const char* savedata_filename)
+{
+    size_t size = tox_get_savedata_size(tox);
+    uint8_t *savedata = malloc(size);
+    tox_get_savedata(tox, savedata);
+
+    char* savedata_tmp_filename = tmpname(savedata_filename);
+
+    FILE *f = fopen(savedata_tmp_filename, "wb");
+    fwrite(savedata, size, 1, f);
+    fclose(f);
+
+    rename(savedata_tmp_filename, savedata_filename);
+
+    free(savedata);
+    free(savedata_tmp_filename);
 }
 
 void print_tox_id(Tox* tox)
@@ -138,7 +200,7 @@ void bootstrap_tox(Tox* tox)
 
 int main()
 {
-  Tox* tox = create_tox();
+  Tox* tox = create_tox(NULL);
 
   printf("ID: ");
 
@@ -151,6 +213,7 @@ int main()
   tox_callback_friend_request(tox, onFriendRequest);
   tox_callback_friend_message(tox, onFriendMessage);
 
+  update_savedata_file(tox, SAVEDATA_FILE);
   // Event loop
 
   struct timespec delay;
@@ -178,6 +241,7 @@ void onFriendRequest(
   void *const user_data)
 {
   tox_friend_add_norequest(tox, key, NULL);
+  update_savedata_file(tox, SAVEDATA_FILE);
 }
 
 void onFriendMessage(
