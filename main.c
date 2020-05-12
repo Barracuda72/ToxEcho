@@ -63,6 +63,23 @@ static void onConnectionStatus(
   TOX_CONNECTION connection_status, 
   void *user_data);
 
+static void onConferenceInvite(
+  Tox *tox, 
+  uint32_t friend_number, 
+  TOX_CONFERENCE_TYPE type, 
+  const uint8_t *cookie,
+  size_t length, 
+  void *user_data);
+
+static void onConferenceMessage(
+  Tox *tox, 
+  uint32_t conference_number, 
+  uint32_t peer_number,
+  TOX_MESSAGE_TYPE type, 
+  const uint8_t *message, 
+  size_t length, 
+  void *user_data);
+
 Tox* create_tox(const char* savedata_filename)
 {
   // Allocate Tox options and initialize with defaults
@@ -224,6 +241,8 @@ int main()
   tox_callback_friend_request(tox, onFriendRequest);
   tox_callback_friend_message(tox, onFriendMessage);
   tox_callback_self_connection_status(tox, onConnectionStatus);
+  tox_callback_conference_invite(tox, onConferenceInvite);
+  tox_callback_conference_message(tox, onConferenceMessage);
 
   update_savedata_file(tox, SAVEDATA_FILE);
 
@@ -292,3 +311,38 @@ void onConnectionStatus(
   }
 }
 
+void onConferenceInvite(
+  Tox *const tox, 
+  const uint32_t friend_number, 
+  const TOX_CONFERENCE_TYPE type, 
+  const uint8_t *const cookie,
+  size_t length, 
+  void *const user_data)
+{
+  switch (type)
+  {
+    case TOX_CONFERENCE_TYPE_TEXT:
+      tox_conference_join(tox, friend_number, cookie, length, NULL);
+      break;
+
+    case TOX_CONFERENCE_TYPE_AV:
+      break;
+  }
+
+  update_savedata_file(tox, SAVEDATA_FILE);
+}
+
+void onConferenceMessage(
+  Tox *const tox, 
+  const uint32_t conference_number, 
+  const uint32_t peer_number,
+  const TOX_MESSAGE_TYPE type, 
+  const uint8_t *const message, 
+  size_t length, 
+  void *const user_data)
+{
+  if (type != TOX_MESSAGE_TYPE_NORMAL)
+    return;
+
+  tox_conference_send_message(tox, conference_number, TOX_MESSAGE_TYPE_NORMAL, message, length, NULL);
+}
