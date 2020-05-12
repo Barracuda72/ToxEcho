@@ -2,7 +2,7 @@ OUTPUT = toxecho
 OBJ = main.o
 LIBS = toxcore
 
-CFLAGS = -std=gnu99 -Wall
+CFLAGS = -std=c11 -Wall -Wextra -pedantic -O2
 LDFLAGS = $(shell pkg-config --libs $(LIBS))
 
 all: $(OBJ)
