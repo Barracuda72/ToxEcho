@@ -58,6 +58,11 @@ static void onFriendMessage(
   size_t length,
   void *user_data);
 
+static void onConnectionStatus(
+  Tox *tox, 
+  TOX_CONNECTION connection_status, 
+  void *user_data);
+
 Tox* create_tox(const char* savedata_filename)
 {
   // Allocate Tox options and initialize with defaults
@@ -212,6 +217,7 @@ int main()
 
   tox_callback_friend_request(tox, onFriendRequest);
   tox_callback_friend_message(tox, onFriendMessage);
+  tox_callback_self_connection_status(tox, onConnectionStatus);
 
   update_savedata_file(tox, SAVEDATA_FILE);
   // Event loop
@@ -257,3 +263,25 @@ void onFriendMessage(
 
   tox_friend_send_message(tox, friend_number, TOX_MESSAGE_TYPE_NORMAL, string, length, NULL);
 }
+
+void onConnectionStatus(
+  Tox *const tox, 
+  const TOX_CONNECTION connection_status, 
+  void *const user_data)
+{
+  switch (connection_status) 
+  {
+    case TOX_CONNECTION_NONE:
+      printf("Offline\n");
+      break;
+
+    case TOX_CONNECTION_TCP:
+      printf("Online, using TCP\n");
+      break;
+
+    case TOX_CONNECTION_UDP:
+      printf("Online, using UDP\n");
+      break;
+  }
+}
+
