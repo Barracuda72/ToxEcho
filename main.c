@@ -356,7 +356,8 @@ void onConferenceMessage(
   if (type != TOX_MESSAGE_TYPE_NORMAL)
     return;
 
-  tox_conference_send_message(tox, conference_number, TOX_MESSAGE_TYPE_NORMAL, message, length, NULL);
+  if (!tox_conference_peer_number_is_ours(tox, conference_number, peer_number, NULL))
+    tox_conference_send_message(tox, conference_number, TOX_MESSAGE_TYPE_NORMAL, message, length, NULL);
 }
 
 void onAudioReceived(
