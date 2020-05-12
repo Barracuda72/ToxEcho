@@ -84,8 +84,8 @@ static void onConferenceMessage(
 
 static void onAudioReceived(
   Tox *tox, 
-  uint32_t groupnumber, 
-  uint32_t peernumber, 
+  uint32_t group_number, 
+  uint32_t peer_number, 
   const int16_t *pcm, 
   unsigned int samples, 
   uint8_t channels, 
@@ -297,6 +297,11 @@ void onFriendRequest(
   size_t length,
   void *const user_data)
 {
+  // Unused variables
+  (void)data;
+  (void)length;
+  (void)user_data;
+
   tox_friend_add_norequest(tox, key, NULL);
   update_savedata_file(tox, SAVEDATA_FILE);
 }
@@ -309,6 +314,9 @@ void onFriendMessage(
   const size_t length,
   void *const user_data)
 {
+  // Unused variables
+  (void)user_data;
+
   if (type != TOX_MESSAGE_TYPE_NORMAL)
     return;
 
@@ -320,6 +328,10 @@ void onConnectionStatus(
   const TOX_CONNECTION connection_status, 
   void *const user_data)
 {
+  // Unused variables
+  (void)tox;
+  (void)user_data;
+
   switch (connection_status) 
   {
     case TOX_CONNECTION_NONE:
@@ -344,6 +356,9 @@ void onConferenceInvite(
   size_t length, 
   void *const user_data)
 {
+  // Unused variables
+  (void)user_data;
+
   switch (type)
   {
     case TOX_CONFERENCE_TYPE_TEXT:
@@ -367,6 +382,9 @@ void onConferenceMessage(
   size_t length, 
   void *const user_data)
 {
+  // Unused variables
+  (void)user_data;
+
   if (type != TOX_MESSAGE_TYPE_NORMAL)
     return;
 
@@ -376,14 +394,24 @@ void onConferenceMessage(
 
 void onAudioReceived(
   Tox *const tox, 
-  const uint32_t groupnumber, 
-  const uint32_t peernumber, 
+  const uint32_t group_number, 
+  const uint32_t peer_number, 
   const int16_t *const pcm, 
   const unsigned int samples, 
   const uint8_t channels, 
   const uint32_t sample_rate, 
   void *const user_data)
 {
+  // Unused variables
+  (void)tox;
+  (void)group_number;
+  (void)peer_number;
+  (void)pcm;
+  (void)samples;
+  (void)channels;
+  (void)sample_rate;
+  (void)user_data;
+
   // Do nothing
 }
 
@@ -394,6 +422,10 @@ void onCallReceived(
   const bool video_enabled, 
   void *const user_data)
 {
+  // Unused variables
+  (void)audio_enabled;
+  (void)user_data;
+
   // Sleep a bit
   struct timespec delay;
 
