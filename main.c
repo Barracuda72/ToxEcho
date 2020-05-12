@@ -210,11 +210,14 @@ void bootstrap_tox(Tox* tox)
   for (int node_index = 0; node_index < NODES_COUNT; ++node_index) {
     struct Node *const node = &nodes[node_index];
 
-    fscanf(nodes_file, "%s %d %s",
+    int count = fscanf(nodes_file, "%s %d %s",
       node->ip,
       &node->port,
       node->key
     );
+
+    if (count != 3)
+      fprintf(stderr, "Failed to parse node %d description!\n", node_index);
   }
 
   fclose(nodes_file);
