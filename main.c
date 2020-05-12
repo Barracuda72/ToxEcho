@@ -83,7 +83,7 @@ static void onConferenceMessage(
   void *user_data);
 
 static void onAudioReceived(
-  Tox *tox, 
+  /*Tox*/void *tox, 
   uint32_t group_number, 
   uint32_t peer_number, 
   const int16_t *pcm, 
@@ -393,7 +393,7 @@ void onConferenceMessage(
 }
 
 void onAudioReceived(
-  Tox *const tox, 
+  /*Tox*/void *const tox, 
   const uint32_t group_number, 
   const uint32_t peer_number, 
   const int16_t *const pcm, 
