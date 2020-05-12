@@ -20,3 +20,6 @@ toxecho
 # Vim temp files
 .*.swp
 .*.swo
+
+# Savedata
+*.tox
