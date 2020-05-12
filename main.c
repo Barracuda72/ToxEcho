@@ -184,7 +184,7 @@ void print_tox_id(Tox* tox)
   char address[TOX_ADDRESS_SIZE];
   tox_self_get_address(tox, (uint8_t*)address);
 
-  for (int i = 0; i < TOX_ADDRESS_SIZE; ++i) {
+  for (unsigned int i = 0; i < TOX_ADDRESS_SIZE; ++i) {
     char d[3];
     snprintf(d, sizeof(d), "%02X", address[i] & 0xFF);
     printf("%s", d);
