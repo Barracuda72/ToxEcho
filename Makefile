@@ -1,6 +1,6 @@
 OUTPUT = toxecho
 OBJ = main.o
-LIBS = libtoxcore
+LIBS = toxcore
 
 CFLAGS = -std=gnu99 -Wall
 LDFLAGS = $(shell pkg-config --libs $(LIBS))
