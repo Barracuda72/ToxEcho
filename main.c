@@ -42,8 +42,8 @@ struct Node {
   Key key;
 };
 
-#define NODES_COUNT 26
-#define NODES_FILE_NAME "nodes"
+#define NODES_COUNT 39
+#define NODES_FILE_NAME "nodes.csv"
 
 static void onFriendRequest(
   Tox *tox,
