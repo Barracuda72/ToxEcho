@@ -54,7 +54,7 @@ static void onFriendMessage(
   size_t length,
   void *user_data);
 
-int main()
+Tox* create_tox()
 {
   // Allocate Tox options and initialize with defaults
 
@@ -69,6 +69,13 @@ int main()
 
   if (err != TOX_ERR_NEW_OK)
     exit(EXIT_FAILURE);
+
+  return tox;
+}
+
+int main()
+{
+  Tox* tox = create_tox();
 
   // Print ID to STDOUT
 
