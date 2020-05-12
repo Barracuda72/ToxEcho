@@ -81,7 +81,7 @@ static void onConferenceMessage(
   size_t length, 
   void *user_data);
 
-void onAudioReceived(
+static void onAudioReceived(
   Tox *tox, 
   uint32_t groupnumber, 
   uint32_t peernumber, 
@@ -89,6 +89,13 @@ void onAudioReceived(
   unsigned int samples, 
   uint8_t channels, 
   uint32_t sample_rate, 
+  void *user_data);
+
+static void onCallReceived(
+  ToxAV *av, 
+  uint32_t friend_number, 
+  bool audio_enabled, 
+  bool video_enabled, 
   void *user_data);
 
 Tox* create_tox(const char* savedata_filename)
@@ -247,6 +254,9 @@ int main()
 
   print_tox_id(tox);
 
+  // Create corresponding ToxAV
+  ToxAV* toxav = toxav_new(tox, NULL);
+
   // Setup callbacks for Tox instance
 
   tox_callback_friend_request(tox, onFriendRequest);
@@ -254,6 +264,8 @@ int main()
   tox_callback_self_connection_status(tox, onConnectionStatus);
   tox_callback_conference_invite(tox, onConferenceInvite);
   tox_callback_conference_message(tox, onConferenceMessage);
+
+  toxav_callback_call(toxav, onCallReceived, NULL);
 
   update_savedata_file(tox, SAVEDATA_FILE);
 
@@ -271,6 +283,7 @@ int main()
 
   // Exit gracefully
 
+  toxav_kill(toxav);
   tox_kill(tox);
 
   exit(EXIT_SUCCESS);
@@ -371,4 +384,32 @@ void onAudioReceived(
   void *const user_data)
 {
   // Do nothing
+}
+
+void onCallReceived(
+  ToxAV *const av, 
+  const uint32_t friend_number, 
+  const bool audio_enabled, 
+  const bool video_enabled, 
+  void *const user_data)
+{
+  // Sleep a bit
+  struct timespec delay;
+
+  delay.tv_sec = 3;
+  delay.tv_nsec = 0;
+  nanosleep(&delay, NULL);
+
+  // Reject call
+  toxav_call_control(av, friend_number, TOXAV_CALL_CONTROL_CANCEL, NULL);
+
+  // Send message
+  const char* message = NULL;
+
+  if (video_enabled)
+    message = "Sorry, I don't accept video calls";
+  else
+    message = "Sorry, I'm not in the mood for voice chat";
+
+  tox_friend_send_message(toxav_get_tox(av), friend_number, TOX_MESSAGE_TYPE_NORMAL, (uint8_t*)message, strlen(message), NULL);
 }
